@@ -18,7 +18,7 @@ def convertToPDF(file_name="lista"):
 
     for file in os.listdir(os.getcwd()):
 
-        if os.path.splitext(file)[1].lower() == ".pdf" and file != "lista.pdf":
+        if os.path.splitext(file)[1].lower() == ".pdf" and file != f"{file_name}.pdf":
             os.remove(f"{os.getcwd()}\\{file}")
     return
 
@@ -53,17 +53,20 @@ def main():
     verbose = False
     pack_into_pdf = False
     pack_into_zip = False
+    file_name = "lista"
     cwd = os.getcwd()
     formats = ('.jpg', '.jpeg')
     quality = 30
 
     if(len(sys.argv) > 1):
-        if(sys.argv[1].lower() == "-v"):
+        if "-v" in sys.argv:
             verbose = True
-        elif(sys.argv[1].lower() == "--pdf"):
+        if "--pdf" in sys.argv:
             pack_into_pdf = True
-        elif(sys.argv[1].lower() == "--zip"):
+        elif "--zip" in sys.argv:
             pack_into_zip = True
+        if "--name" in sys.argv:
+            file_name = sys.argv[sys.argv.index("--name")+1]
 
     for file in os.listdir(cwd):
 
@@ -71,9 +74,9 @@ def main():
             print(f"compressing {file}")
             compressImage(file, quality, verbose, pack_into_pdf)
     if(pack_into_pdf):
-        convertToPDF()
+        convertToPDF(file_name)
     elif(pack_into_zip):
-        packIntoZIP()
+        packIntoZIP(file_name)
     print("Done")
 
 

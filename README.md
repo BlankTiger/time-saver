@@ -7,6 +7,7 @@ Download and run `pip install -r requirements.txt`. Then you can just run the ti
 # Current features
 - compression of jpeg images in the current directory
 - packing compressed images into pdf/zip
+- ability to easily change file name
 
 # Current dependencies
 - Pillow
