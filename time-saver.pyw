@@ -76,9 +76,9 @@ class Window(Frame):
         self.master.title("Time saver")
         self.pack(fill=BOTH, expand=1)
         quit_button = Button(self, text="Quit", command=self.client_exit)
-        compress_button = Button(self, text="Compress", command=lambda: self.compressImages(path_box.get()))
-        pack_to_pdf_button = Button(self, text="Pack into PDF", command=lambda: self.compressToPDF(path_box.get(), file_name_box.get()))
-        pack_to_zip_button = Button(self, text="Pack into ZIP", command=lambda: self.packIntoZIP(path_box.get(), file_name_box.get()))
+        compress_button = Button(self, text="Compress", command=lambda: self.compressImages(path_box.get(), int(quality_box.get())))
+        pack_to_pdf_button = Button(self, text="Pack into PDF", command=lambda: self.compressToPDF(path_box.get(), file_name_box.get(), int(quality_box.get())))
+        pack_to_zip_button = Button(self, text="Pack into ZIP", command=lambda: self.packIntoZIP(path_box.get(), file_name_box.get(), int(quality_box.get())))
         file_name_label = Label(self, text="Enter file name")
         file_name = StringVar(self)
         file_name.set("lista")
@@ -89,30 +89,49 @@ class Window(Frame):
         path.set(os.getcwd())
         path_box = Entry(self, width=30, justify=CENTER, textvariable = path)
         
+        quality_label = Label(self, text="Enter quality (1-100)")
+        quality = StringVar(self)
+        quality.set(30)
+        quality_box = Entry(self, width=10, justify=CENTER, textvariable = quality)
+        
         self.master.update()
-        file_name_label.place(relx=0.3, rely=0.2, anchor=CENTER)
-        file_name_box.place(relx=0.3, rely=0.3, anchor=CENTER)
-        path_label.place(relx=0.7, rely=0.2, anchor=CENTER)
-        path_box.place(relx=0.7, rely=0.3, anchor=CENTER)
+        file_name_label.place(relx=0.2, rely=0.2, anchor=CENTER)
+        file_name_box.place(relx=0.2, rely=0.3, anchor=CENTER)
+        path_label.place(relx=0.5, rely=0.2, anchor=CENTER)
+        path_box.place(relx=0.5, rely=0.3, anchor=CENTER)
+        quality_label.place(relx=0.8, rely=0.2, anchor=CENTER)
+        quality_box.place(relx=0.8, rely=0.3, anchor=CENTER)
         compress_button.place(relx=0.2, rely=0.5, anchor=CENTER)
         pack_to_pdf_button.place(relx=0.5, rely=0.5, anchor=CENTER)
         pack_to_zip_button.place(relx=0.8, rely=0.5, anchor=CENTER)
         quit_button.place(relx=0.5, rely=0.9, anchor=CENTER)
         
 
-    def compressImages(self, path=os.getcwd()):
-        timeSaver(path=f'{path}')
+    def compressImages(self, path=os.getcwd(), quality=30):
+        if quality > 100:
+            quality = 100
+        elif quality < 1:
+            quality = 1
+        timeSaver(path=f'{path}', quality=quality)
 
-    def compressToPDF(self, path=os.getcwd(), file_name="lista"):
-        timeSaver(file_name, True, False, path=f'{path}')
+    def compressToPDF(self, path=os.getcwd(), file_name="lista", quality=30):
+        if quality > 100:
+            quality = 100
+        elif quality < 1:
+            quality = 1
+        timeSaver(file_name, True, False, path=f'{path}', quality=quality)
     
-    def packIntoZIP(self, path=os.getcwd(), file_name="lista"):
-        timeSaver(file_name, False, True, path=f'{path}')
+    def packIntoZIP(self, path=os.getcwd(), file_name="lista", quality=30):
+        if quality > 100:
+            quality = 100
+        elif quality < 1:
+            quality = 1
+        timeSaver(file_name, False, True, path=f'{path}', quality=quality)
 
     def client_exit(self):
         sys.exit()
 
 root = Tk()
-root.geometry("400x200")
+root.geometry("600x200")
 app = Window(root)
 root.mainloop()
