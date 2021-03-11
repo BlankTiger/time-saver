@@ -1,5 +1,69 @@
-from tkinter import *
 import os
+import sys
+import PIL.Image
+from PIL import ImageOps
+from PyPDF4 import PdfFileMerger
+from zipfile import ZipFile
+from os.path import basename
+from tkinter import *
+
+
+def convertToPDF(path, file_name="lista"):
+
+    pdf_merger = PdfFileMerger()
+    for file in os.listdir(path):
+
+        if os.path.splitext(file)[1].lower() == ".pdf":
+            pdf_merger.append(f"{path}\\{file}")
+    with open(f"{path}\\{file_name}.pdf", "wb") as fileobj:
+        pdf_merger.write(fileobj)
+        pdf_merger.close()
+
+    for file in os.listdir(path):
+
+        if os.path.splitext(file)[1].lower() == ".pdf" and file != f"{file_name}.pdf":
+            os.remove(f"{path}\\{file}")
+    return
+
+def packIntoZIP(path, file_name="lista"):
+
+    with ZipFile(f"{path}\\{file_name}.zip", 'w') as zip:
+        for file in os.listdir(path):
+            if "compressed" in file:
+                zip.write(f"{path}\\{file}", basename(f"{path}\\{file}"))
+    for file in os.listdir(path):
+
+        if "compressed" in file and os.path.splitext(file)[1].lower() == ".jpg":
+            os.remove(f"{path}\\{file}")
+    return
+
+def compressImage(picture, path, quality_value, verbose=False, pack_into_pdf=False):
+
+    picture_path = os.path.join(path, picture)
+    compressed = PIL.Image.open(picture_path)
+    compressed = ImageOps.exif_transpose(compressed)
+    if(pack_into_pdf):
+        compressed.save(f"{path}\\compressed_{picture}.pdf", "PDF", optimize=True, quality=quality_value)
+    else:
+        compressed.save(f"{path}\\compressed_{picture}", "JPEG", optimize=True, quality=quality_value)
+
+    compressed.close()
+    return
+
+
+def timeSaver(file_name="lista", pack_into_pdf=False, pack_into_zip=False, verbose=False, path=os.getcwd(), formats=('.jpg', '.jpeg'), quality=30):
+
+
+    for file in os.listdir(path):
+
+        if os.path.splitext(file)[1].lower() in formats:
+            print(f"compressing {file}")
+            compressImage(file, path, quality, verbose, pack_into_pdf)
+    if(pack_into_pdf):
+        convertToPDF(path, file_name)
+    elif(pack_into_zip):
+        packIntoZIP(path, file_name)
+
 
 class Window(Frame):
 
@@ -37,16 +101,16 @@ class Window(Frame):
         
 
     def compressImages(self, path=os.getcwd()):
-        os.system(f'timero.py --path \"{path}\"')
+        timeSaver(path=f'{path}')
 
     def compressToPDF(self, path=os.getcwd(), file_name="lista"):
-        os.system(f'timero.py --pdf --path \"{path}\" --name {file_name}')
+        timeSaver(file_name, True, False, path=f'{path}')
     
     def packIntoZIP(self, path=os.getcwd(), file_name="lista"):
-        os.system(f'timero.py --zip --path \"{path}\" --name {file_name}')
+        timeSaver(file_name, False, True, path=f'{path}')
 
     def client_exit(self):
-        exit()
+        sys.exit()
 
 root = Tk()
 root.geometry("400x200")
