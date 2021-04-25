@@ -14,3 +14,5 @@ Two options here, if you're running windows you can just run time-saver.exe anyw
 # Current dependencies
 - Pillow
 - PyPDF4
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
