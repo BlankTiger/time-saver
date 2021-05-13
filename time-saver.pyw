@@ -79,6 +79,7 @@ class Window(Frame):
         compress_button = Button(self, text="Compress", command=lambda: self.compressImages(path_box.get(), int(quality_box.get())))
         pack_to_pdf_button = Button(self, text="Pack into PDF", command=lambda: self.compressToPDF(path_box.get(), file_name_box.get(), int(quality_box.get())))
         pack_to_zip_button = Button(self, text="Pack into ZIP", command=lambda: self.packIntoZIP(path_box.get(), file_name_box.get(), int(quality_box.get())))
+        convert_to_jpg_button = Button(self, text="Convert all png in selected folder to jpg", command=lambda: self.convertToJpg(path_box.get()))
         file_name_label = Label(self, text="Enter file name")
         file_name = StringVar(self)
         file_name.set("lista")
@@ -93,7 +94,7 @@ class Window(Frame):
         quality = StringVar(self)
         quality.set(30)
         quality_box = Entry(self, width=10, justify=CENTER, textvariable = quality)
-        
+
         self.master.update()
         file_name_label.place(relx=0.2, rely=0.2, anchor=CENTER)
         file_name_box.place(relx=0.2, rely=0.3, anchor=CENTER)
@@ -104,6 +105,7 @@ class Window(Frame):
         compress_button.place(relx=0.2, rely=0.5, anchor=CENTER)
         pack_to_pdf_button.place(relx=0.5, rely=0.5, anchor=CENTER)
         pack_to_zip_button.place(relx=0.8, rely=0.5, anchor=CENTER)
+        convert_to_jpg_button.place(relx=0.5, rely=0.7, anchor=CENTER)
         quit_button.place(relx=0.5, rely=0.9, anchor=CENTER)
         
 
@@ -127,6 +129,14 @@ class Window(Frame):
         elif quality < 1:
             quality = 1
         timeSaver(file_name, False, True, path=f'{path}', quality=quality)
+        
+    def convertToJpg(self, path=os.getcwd()):
+        for file in os.listdir(path):
+            if '.png' in file:
+                file_path = os.path.join(path, file)
+                new_file_path = file_path.replace('.png', '.jpg')
+                image = PIL.Image.open(file_path).convert('RGB')
+                image.save(new_file_path)
 
     def client_exit(self):
         sys.exit()
